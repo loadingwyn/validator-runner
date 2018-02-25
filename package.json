@@ -1,0 +1,46 @@
+{
+  "name": "async-form-validator",
+  "version": "0.0.2",
+  "description": "tiny moment.js",
+  "main": "dist/bundle.js",
+  "module": "dist/bundle.esm.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && rollup --config rollup.config.esm.js && rollup --config rollup.config.umd.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "validator",
+    "form"
+  ],
+  "files": [
+    "dist",
+    "src"
+  ],
+  "author": "loadingwyn",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.37",
+    "@babel/preset-env": "^7.0.0-beta.37",
+    "babel-core": "^7.0.0-0",
+    "babel-eslint": "^8.0.1",
+    "babel-jest": "^22.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "eslint": "^4.8.0",
+    "eslint-config-prettier": "^2.6.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-prettier": "^2.6.0",
+    "jest": "^22.1.1",
+    "prettier": "^1.7.4",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.54.0",
+    "rollup-plugin-uglify": "^2.0.1",
+    "uglify-es": "^3.3.7"
+  },
+  "dependencies": {
+    "rollup-plugin-babel": "^4.0.0-beta.0"
+  }
+}

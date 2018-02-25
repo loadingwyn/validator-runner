@@ -1,0 +1,14 @@
+node_modules/
+.vscode
+.idea
+.npm
+*.log
+*.pid
+configs/*
+!src/configs/
+tools/*
+!src/tools/
+utils/*
+!src/utils/
+/public/*
+npm-debug.*
