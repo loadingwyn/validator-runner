@@ -88,21 +88,17 @@ export default class Validator {
           return v;
         }),
       ),
-    ).then(
-      () => {
-        callback(errors, !hasError);
-        return hasError ? Promise.reject(errors) : errors;
-      },
-    );
+    ).then(() => {
+      callback(errors, !hasError);
+      return hasError ? Promise.reject(errors) : errors;
+    });
   }
 
-  messageHandler(result, rule, target, promiseValue) {
-    if (typeof rule.message === 'function') {
-      result.push(
-        `${rule.message(...target, promiseValue) || 'Error!'}`.trim(),
-      );
+  messageHandler(result, message, target, promiseValue) {
+    if (typeof message === 'function') {
+      result.push(`${message(...target, promiseValue) || 'Error!'}`.trim());
     } else {
-      result.push(`${rule.message || 'Error!'}`.trim());
+      result.push(`${message || 'Error!'}`.trim());
     }
     return result;
   }
@@ -133,17 +129,23 @@ export default class Validator {
     return ruleReturn.then(
       promiseValue => Object.assign(data, { promiseValue }),
       promiseValue => {
-        data.errors = this.messageHandler(errors, rule, target, promiseValue);
+        data.errors = this.messageHandler(
+          errors,
+          rule.message,
+          target,
+          promiseValue,
+        );
         return Promise.reject(Object.assign(data, { promiseValue }));
       },
     );
   };
 
   addRule(newRuleSet) {
-    this.ruleSet = {
-      ...this.ruleSet,
-      ...newRuleSet,
-    };
+    this.ruleSet = Object.assign(this.ruleSet, newRuleSet);
+  }
+
+  updateRuleSet(newRuleSet) {
+    this.ruleSet = newRuleSet;
   }
 
   deleteRule(ruleName) {
