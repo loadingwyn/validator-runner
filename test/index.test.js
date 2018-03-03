@@ -50,7 +50,7 @@ describe('Validator', () => {
         .validateItem({ name: '' }, 'name', () => {}, {
           first: false,
           cover: true,
-          parallel: false,
+          concurrent: false,
         })
         .catch(data => {
           expect(data.errors).toEqual([
@@ -82,7 +82,7 @@ describe('Validator', () => {
             expect(errors).toEqual([`Please input something!`]);
             done();
           },
-          { first: true, cover: false, parallel: false },
+          { first: true, cover: false, concurrent: false },
         )
         .catch(e => e);
       validator

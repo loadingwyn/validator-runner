@@ -8,7 +8,7 @@ export default class Validator {
     source,
     fieldName,
     callback,
-    options = { first: true, cover: true, parallel: false },
+    options = { first: true, cover: true, concurrent: false },
     customFieldDescriptor,
   ) {
     let errors = [];
@@ -21,7 +21,7 @@ export default class Validator {
     if (!Array.isArray(rules)) {
       rules = [rules];
     }
-    if (options.parallel) {
+    if (options.concurrent) {
       promiseQueue = Promise.all(
         rules.map(rule => {
           const ruleTarget = [fieldName, ...(rule.join || [])].map(
