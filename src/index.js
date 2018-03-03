@@ -15,6 +15,7 @@ export default class Validator {
     let promiseQueue;
     let rules = customFieldDescriptor || this.descriptor[fieldName];
     if (!rules || rules.length < 1) {
+      callback(errors, {})
       return;
     }
     if (!Array.isArray(rules)) {
