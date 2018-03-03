@@ -6,12 +6,17 @@
   "module": "dist/bundle.esm.js",
   "scripts": {
     "clean": "rimraf dist",
-    "build":
-      "npm run clean && rollup --config rollup.config.esm.js && rollup --config rollup.config.umd.js",
+    "build": "npm run clean && rollup --config rollup.config.esm.js && rollup --config rollup.config.umd.js",
     "test": "jest"
   },
-  "keywords": ["validator", "form"],
-  "files": ["dist", "src"],
+  "keywords": [
+    "validator",
+    "form"
+  ],
+  "files": [
+    "dist",
+    "src"
+  ],
   "author": "loadingwyn",
   "license": "MIT",
   "devDependencies": {

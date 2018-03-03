@@ -1,4 +1,4 @@
-import Validator from '../src';
+import Validator from '../dist/bundle.esm';
 
 describe('Validator', () => {
   const rules = {
