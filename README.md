@@ -54,7 +54,7 @@ validator.validateItem({ name: 'loading' }, 'name', (errors, data) => {
 
 > ⚠️⚠️⚠️
 >
-> Note: All sync validators will be turn into promises internally.
+> Note: All sync validators will be transformed to promises internally.
 
 ## Apis
 
