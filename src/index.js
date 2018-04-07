@@ -66,11 +66,11 @@ export default class Validator {
     );
   }
 
-  validate(source, callback, specificField, options = {}) {
+  validate(source, callback, options = {}) {
     let hasError = false;
     const errors = {};
     const promises = [];
-    (specificField || Object.keys(this.descriptor)).forEach(name => {
+    (options.specificField || Object.keys(this.descriptor)).forEach(name => {
       promises.push(
         this.validateItem(
           source,
