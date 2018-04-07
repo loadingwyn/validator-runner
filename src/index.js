@@ -77,6 +77,7 @@ export default class Validator {
           name,
           fieldError => {
             errors[name] = fieldError;
+            options.fieldCallback && options.fieldCallback(name, fieldError);
           },
           options,
         ),
