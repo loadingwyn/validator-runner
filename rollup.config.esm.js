@@ -7,6 +7,7 @@ export default {
   output: {
     file: 'dist/bundle.esm.js',
     format: 'es',
+    sourcemap: true,
   },
   plugins: [
     babel({

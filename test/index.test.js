@@ -1,4 +1,4 @@
-import Validator from '../dist/bundle.esm';
+import Validator from '../src';
 
 describe('Validator', () => {
   const rules = {
@@ -94,7 +94,7 @@ describe('Validator', () => {
     });
   });
 
-  describe('validator', () => {
+  describe('validate', () => {
     test('success', done => {
       const validator = new Validator(rules);
       validator.validate({ name: 'loading', job: '3' }, errors => {
@@ -103,7 +103,7 @@ describe('Validator', () => {
           job: [],
         });
         done();
-      });
+      }, {});
     });
     test('fail', done => {
       const validator = new Validator(rules);
