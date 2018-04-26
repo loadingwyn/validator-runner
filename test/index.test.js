@@ -48,8 +48,8 @@ describe('Validator', () => {
       expect.assertions(1);
       return validator
         .validateItem({ name: '' }, 'name', () => {}, {
-          first: false,
-          cover: true,
+          traversal: true,
+          retention: false,
           concurrent: false,
         })
         .catch(data => {
@@ -82,7 +82,7 @@ describe('Validator', () => {
             expect(errors).toEqual([`Please input something!`]);
             done();
           },
-          { first: true, cover: false, concurrent: false },
+          { traversal: false, retention: true, concurrent: false },
         )
         .catch(e => e);
       validator
@@ -97,13 +97,17 @@ describe('Validator', () => {
   describe('validate', () => {
     test('success', done => {
       const validator = new Validator(rules);
-      validator.validate({ name: 'loading', job: '3' }, errors => {
-        expect(errors).toEqual({
-          name: [],
-          job: [],
-        });
-        done();
-      }, {});
+      validator.validate(
+        { name: 'loading', job: '3' },
+        errors => {
+          expect(errors).toEqual({
+            name: [],
+            job: [],
+          });
+          done();
+        },
+        {},
+      );
     });
     test('fail', done => {
       const validator = new Validator(rules);

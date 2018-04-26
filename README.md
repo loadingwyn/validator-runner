@@ -60,7 +60,7 @@ validator.validateItem({ name: 'loading' }, 'name', (errors, data) => {
 
 ### validateItem
 
-`validateItem(source, fieldName, callback, options = { first: true, cover: true, concurrent: false },customFieldDescriptor)`
+`validateItem(source, fieldName, callback, options = { traversal: false, retention: false, concurrent: false },customFieldDescriptor)`
 
 #### Arguments
 
@@ -69,9 +69,9 @@ validator.validateItem({ name: 'loading' }, 'name', (errors, data) => {
 - callback: `function(errors, data)`
 - option: `object`
 
-`option.first` If true, every field will stop validation at first failed rule
+`option.traversal` If true, every field will not stop validation at first failed rule
 
-`option.cover` If true, the last pending validation will be covered when a new validation begins
+`option.retention` If true, the last pending validation will be not covered when a new validation begins
 
 `option.concurrent` if true, all validator will be executed at the same time
 
@@ -81,7 +81,7 @@ validator.validateItem({ name: 'loading' }, 'name', (errors, data) => {
 
 ### validate
 
-`validate(source, callback, specificField, options = { first: true, cover: true, concurrent: false },customFieldDescriptor)`
+`validate(source, callback, specificField, options = { traversal: false, retention: false, concurrent: false },customFieldDescriptor)`
 
 #### Arguments
 

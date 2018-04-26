@@ -8,7 +8,7 @@ export default class Validator {
     source,
     fieldName,
     callback,
-    options = { first: true, cover: true, concurrent: false },
+    options = { traversal: false, retention: false, concurrent: false },
     customFieldDescriptor,
   ) {
     let errors = [];
@@ -32,7 +32,7 @@ export default class Validator {
             rule,
             ruleTarget,
             errors,
-          ).then(value => value, options.first ? null : value => value);
+          ).then(value => value, options.traversal ? value => value : null);
         }),
       );
     } else {
@@ -42,23 +42,23 @@ export default class Validator {
         );
         return queue.then(
           () => this.transformToPromise(fieldName, rule, ruleTarget, errors),
-          options.first
-            ? null
-            : () =>
-                this.transformToPromise(fieldName, rule, ruleTarget, errors),
+          options.traversal
+            ? () =>
+                this.transformToPromise(fieldName, rule, ruleTarget, errors)
+            : null,
         );
       }, Promise.resolve());
     }
     this.lastValidator[fieldName] = promiseQueue;
     return promiseQueue.then(
       value => {
-        (!options.cover || this.lastValidator[fieldName] === promiseQueue) &&
+        (options.retention || this.lastValidator[fieldName] === promiseQueue) &&
           callback &&
           callback(errors, value);
         return value;
       },
       value => {
-        (!options.cover || this.lastValidator[fieldName] === promiseQueue) &&
+        (options.retention || this.lastValidator[fieldName] === promiseQueue) &&
           callback &&
           callback(errors, value);
         return Promise.reject(value);
