@@ -1,6 +1,6 @@
 {
   "name": "validator-runner",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Validate form asynchronous",
   "main": "dist/bundle.js",
   "module": "dist/bundle.esm.js",
