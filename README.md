@@ -77,7 +77,7 @@ validator.validateItem({ name: 'loading' }, 'name', (errors, data) => {
 
 #### Return
 
-- promise: A promise that will be rejected if the validation fail
+- promise: A promise that will be rejected if the validation fails.
 
 ### validate
 
@@ -92,4 +92,4 @@ validator.validateItem({ name: 'loading' }, 'name', (errors, data) => {
 
 #### Return
 
-- promise: A promise that will be rejected if the validation fail
+- promise: A promise that will be rejected if the validation fails.
