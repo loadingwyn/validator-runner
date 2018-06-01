@@ -117,7 +117,7 @@ describe('Validator', () => {
           job: ['Only FE!'],
         });
         done();
-      });
+      }).catch(errors => errors);
     });
   });
 });
