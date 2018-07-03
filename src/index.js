@@ -1,22 +1,17 @@
 export default class Validator {
-  constructor(descriptor) {
+  constructor(schema, options = { first: true, concurrent: false }) {
     this.lastValidator = {};
-    this.descriptor = descriptor;
+    this.schema = schema;
+    this.options = options;
   }
 
-  validateItem(
-    source,
-    fieldName,
-    callback,
-    options = { traversal: false, retention: false, concurrent: false },
-    customFieldDescriptor,
-  ) {
+  validate(target, rules, options = {}, ...other) {
     let errors = [];
     let promiseQueue;
-    let rules = customFieldDescriptor || this.descriptor[fieldName];
     if (!rules || rules.length < 1) {
-      callback(errors, {});
-      return;
+      return Promise.resolve({
+        value: target,
+      });
     }
     if (!Array.isArray(rules)) {
       rules = [rules];
@@ -24,63 +19,62 @@ export default class Validator {
     if (options.concurrent) {
       promiseQueue = Promise.all(
         rules.map(rule => {
-          const ruleTarget = [fieldName, ...(rule.join || [])].map(
-            name => source[name],
+          return this.transformToPromise(rule, target, errors, ...other).then(
+            value => value,
+            options.first ? value => value : null,
           );
-          return this.transformToPromise(
-            fieldName,
-            rule,
-            ruleTarget,
-            errors,
-          ).then(value => value, options.traversal ? value => value : null);
         }),
       );
     } else {
       promiseQueue = rules.reduce((queue, rule) => {
-        const ruleTarget = [fieldName, ...(rule.join || [])].map(
-          name => source[name],
-        );
         return queue.then(
-          () => this.transformToPromise(fieldName, rule, ruleTarget, errors),
-          options.traversal
-            ? () =>
-                this.transformToPromise(fieldName, rule, ruleTarget, errors)
+          () => this.transformToPromise(rule, target, errors, ...other),
+          !options.first
+            ? () => this.transformToPromise(rule, target, errors, ...other)
             : null,
         );
       }, Promise.resolve());
     }
-    this.lastValidator[fieldName] = promiseQueue;
-    return promiseQueue.then(
+    return promiseQueue;
+  }
+
+  validateItem(source, fieldName, callback, ...other) {
+    let rules = this.schema[fieldName];
+    const validation = this.validate(
+      source[fieldName],
+      rules,
+      this.options,
+      ...other,
+    );
+    this.lastValidator[fieldName] = validation;
+    return validation.then(
       value => {
-        (options.retention || this.lastValidator[fieldName] === promiseQueue) &&
-          callback &&
-          callback(errors, value);
+        if (callback && this.lastValidator[fieldName] === validation) {
+          this.lastValidator[fieldName] = null;
+          callback(null, value.target);
+        }
         return value;
       },
       value => {
-        (options.retention || this.lastValidator[fieldName] === promiseQueue) &&
-          callback &&
-          callback(errors, value);
-        return Promise.reject(value);
+        if (callback && this.lastValidator[fieldName] === validation) {
+          this.lastValidator[fieldName] = null;
+          callback(value.errors, value.target);
+        }
+        return value;
       },
     );
   }
 
-  validate(source, callback, options = {}) {
+  validateAll(source, callback, options = {}) {
     let hasError = false;
     const errors = {};
     const promises = [];
-    (options.specificField || Object.keys(this.descriptor)).forEach(name => {
+    (options.specificField || Object.keys(this.schema)).forEach(name => {
       promises.push(
-        this.validateItem(
-          source,
-          name,
-          fieldError => {
-            errors[name] = fieldError;
-            options.fieldCallback && options.fieldCallback(name, fieldError);
-          },
-          options,
-        ),
+        this.validateItem(source, name, fieldError => {
+          errors[name] = fieldError;
+          options.fieldCallback && options.fieldCallback(name, fieldError);
+        }),
       );
     });
     return Promise.all(
@@ -92,15 +86,17 @@ export default class Validator {
       ),
     ).then(() => {
       callback(errors, !hasError);
-      return hasError ? Promise.reject(errors) : errors;
+      return hasError ? null : errors;
     });
   }
 
-  messageHandler(result, message, target, promiseValue) {
+  messageHandler(result, message, target, promiseValue, ...other) {
     if (typeof message === 'function') {
-      result.push(`${message(...target, promiseValue) || 'Error!'}`.trim());
+      result.push(
+        `${message(target, promiseValue, ...other) || 'Error!'}`.trim(),
+      );
     } else {
-      result.push(`${message || 'Error!'}`.trim());
+      result.push(`${message != null ? message : 'Error!'}`.trim());
     }
     return result;
   }
@@ -113,20 +109,19 @@ export default class Validator {
     this.lastValidator = {};
   }
 
-  transformToPromise = (fieldName, rule, target, errors) => {
-    let ruleReturn = rule.validator(...target);
-    let isAsync = true;
+  transformToPromise = (rule, target, errors, ...other) => {
+    if (typeof rule.validator !== 'function') {
+      throw 'invalid validator';
+    }
+    let ruleReturn = rule.validator(target, ...other);
     if (!ruleReturn || !ruleReturn.then || !ruleReturn.catch) {
-      isAsync = false;
       ruleReturn = ruleReturn
         ? Promise.resolve(ruleReturn)
         : Promise.reject(ruleReturn);
     }
     const data = {
       errors,
-      fieldName,
       target,
-      isAsync,
     };
     return ruleReturn.then(
       promiseValue => Object.assign(data, { promiseValue }),
@@ -136,21 +131,18 @@ export default class Validator {
           rule.message,
           target,
           promiseValue,
+          ...other,
         );
         return Promise.reject(Object.assign(data, { promiseValue }));
       },
     );
   };
 
-  addRule(newRuleSet) {
-    this.ruleSet = Object.assign(this.ruleSet, newRuleSet);
+  setSchema(schema) {
+    this.schema = schema;
   }
 
-  updateRuleSet(newRuleSet) {
-    this.ruleSet = newRuleSet;
-  }
-
-  deleteRule(ruleName) {
-    delete this.ruleSet[ruleName];
+  setOptions(options) {
+    this.options = options;
   }
 }
