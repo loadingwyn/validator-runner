@@ -40,12 +40,17 @@ export default class Validator {
 
   validateItem(source, fieldName, callback, ...other) {
     let rules = this.schema[fieldName];
-    const validation = this.validate(
-      source[fieldName],
-      rules,
-      this.options,
-      ...other,
-    );
+    let targets = source[fieldName];
+    if (rules && rules.rules) {
+      rules = rules.rules;
+    }
+    if (rules && rules.withFields) {
+      const fields = Array.isArray(rules.withFields)
+        ? rules.withFields
+        : [rules.withFields];
+      targets = [fieldName, ...fields].map(name => source[name]);
+    }
+    const validation = this.validate(targets, rules, this.options, ...other);
     this.lastValidator[fieldName] = validation;
     return validation.then(
       value => {

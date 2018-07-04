@@ -20,10 +20,13 @@ describe('Validator', () => {
   const rules = {
     name: nameRule,
     job: {
-      validator(data) {
-        return data === '3';
+      rules: {
+        validator(data) {
+          return data[0] === '3' && data[1] === 'loading';
+        },
+        message: 'Only FE!',
+        withFields: ['name'],
       },
-      message: 'Only FE!',
     },
   };
   describe('validate', () => {
@@ -81,6 +84,12 @@ describe('Validator', () => {
         done();
       });
       validator.validateItem({ name: 'loading' }, 'name', errors => {
+        expect(errors).toEqual(null);
+        done();
+      });
+    });
+    test('with', done => {
+      validator.validateItem({ name: 'loading', job: '3' }, 'job', errors => {
         expect(errors).toEqual(null);
         done();
       });
