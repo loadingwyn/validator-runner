@@ -70,30 +70,30 @@ export default class Validator {
     );
   }
 
-  validateAll(source, callback, options = {}) {
-    let hasError = false;
-    const errors = {};
-    const promises = [];
-    (options.specificField || Object.keys(this.schema)).forEach(name => {
-      promises.push(
-        this.validateItem(source, name, fieldError => {
-          errors[name] = fieldError;
-          options.fieldCallback && options.fieldCallback(name, fieldError);
-        }),
-      );
-    });
-    return Promise.all(
-      promises.map(p =>
-        p.catch(v => {
-          hasError = true;
-          return v;
-        }),
-      ),
-    ).then(() => {
-      callback(errors, !hasError);
-      return hasError ? null : errors;
-    });
-  }
+  // validateAll(source, callback, options = {}) {
+  //   let hasError = false;
+  //   const errors = {};
+  //   const promises = [];
+  //   (options.specificField || Object.keys(this.schema)).forEach(name => {
+  //     promises.push(
+  //       this.validateItem(source, name, fieldError => {
+  //         errors[name] = fieldError;
+  //         options.fieldCallback && options.fieldCallback(name, fieldError);
+  //       }),
+  //     );
+  //   });
+  //   return Promise.all(
+  //     promises.map(p =>
+  //       p.catch(v => {
+  //         hasError = true;
+  //         return v;
+  //       }),
+  //     ),
+  //   ).then(() => {
+  //     callback(errors, !hasError);
+  //     return hasError ? null : errors;
+  //   });
+  // }
 
   messageHandler(result, message, target, promiseValue, ...other) {
     if (typeof message === 'function') {

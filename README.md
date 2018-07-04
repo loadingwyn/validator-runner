@@ -81,18 +81,3 @@ validator.validateItem({ name: 'loading' }, 'name', (errors, data) => {
 #### Return
 
 - promise: A promise that will be rejected if the validation fails.
-
-### validateAll
-
-`validateAll(source, callback, specificField, options = { traversal: false, retention: false, concurrent: false },customFieldDescriptor)`
-
-#### Arguments
-
-- source: `object` The data to validate
-- callback: `function(errors, data)`
-- specificField: `array` The names of field to validate. If null, all fields will be validated.
-- option: `object`
-
-#### Return
-
-- promise: A promise that will be rejected if the validation fails.
