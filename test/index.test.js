@@ -25,8 +25,8 @@ describe('Validator', () => {
           return data[0] === '3' && data[1] === 'loading';
         },
         message: 'Only FE!',
-        withFields: ['name'],
       },
+      withFields: ['name'],
     },
   };
   describe('validate', () => {
