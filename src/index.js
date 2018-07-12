@@ -54,16 +54,22 @@ export default class Validator {
     this.lastValidator[fieldName] = validation;
     return validation.then(
       value => {
-        if (callback && this.lastValidator[fieldName] === validation) {
-          this.lastValidator[fieldName] = null;
-          callback(null, value.target);
+        if (value) {
+          value.fieldName = fieldName;
+          if (callback && this.lastValidator[fieldName] === validation) {
+            this.lastValidator[fieldName] = null;
+            callback(null, value.target);
+          }
         }
         return value;
       },
       value => {
-        if (callback && this.lastValidator[fieldName] === validation) {
-          this.lastValidator[fieldName] = null;
-          callback(value.errors, value.target);
+        if (value) {
+          value.fieldName = fieldName;
+          if (callback && this.lastValidator[fieldName] === validation) {
+            this.lastValidator[fieldName] = null;
+            callback(value.errors, value.target);
+          }
         }
         return value;
       },
